@@ -1,4 +1,138 @@
 class CardModel {
+  String _id;
+  int _dbfId;
+  String _name;
+  String _text;
+  String _flavor;
+  String _artist;
+  int _attack;
+  String _cardClass;
+  bool _collectible;
+  int _cost;
+  bool _elite;
+  String _faction;
+  int _health;
+  List<String> _mechanics;
+  String _rarity;
+  String _set;
+  String _type;
+
+  CardModel(
+      {String id,
+      int dbfId,
+      String name,
+      String text,
+      String flavor,
+      String artist,
+      int attack,
+      String cardClass,
+      bool collectible,
+      int cost,
+      bool elite,
+      String faction,
+      int health,
+      List<String> mechanics,
+      String rarity,
+      String set,
+      String type}) {
+    this._id = id;
+    this._dbfId = dbfId;
+    this._name = name;
+    this._text = text;
+    this._flavor = flavor;
+    this._artist = artist;
+    this._attack = attack;
+    this._cardClass = cardClass;
+    this._collectible = collectible;
+    this._cost = cost;
+    this._elite = elite;
+    this._faction = faction;
+    this._health = health;
+    this._mechanics = mechanics;
+    this._rarity = rarity;
+    this._set = set;
+    this._type = type;
+  }
+
+  String get id => _id;
+  set id(String id) => _id = id;
+  int get dbfId => _dbfId;
+  set dbfId(int dbfId) => _dbfId = dbfId;
+  String get name => _name;
+  set name(String name) => _name = name;
+  String get text => _text;
+  set text(String text) => _text = text;
+  String get flavor => _flavor;
+  set flavor(String flavor) => _flavor = flavor;
+  String get artist => _artist;
+  set artist(String artist) => _artist = artist;
+  int get attack => _attack;
+  set attack(int attack) => _attack = attack;
+  String get cardClass => _cardClass;
+  set cardClass(String cardClass) => _cardClass = cardClass;
+  bool get collectible => _collectible;
+  set collectible(bool collectible) => _collectible = collectible;
+  int get cost => _cost;
+  set cost(int cost) => _cost = cost;
+  bool get elite => _elite;
+  set elite(bool elite) => _elite = elite;
+  String get faction => _faction;
+  set faction(String faction) => _faction = faction;
+  int get health => _health;
+  set health(int health) => _health = health;
+  List<String> get mechanics => _mechanics;
+  set mechanics(List<String> mechanics) => _mechanics = mechanics;
+  String get rarity => _rarity;
+  set rarity(String rarity) => _rarity = rarity;
+  String get set => _set;
+  set set(String set) => _set = set;
+  String get type => _type;
+  set type(String type) => _type = type;
+
+  CardModel.fromJson(Map<String, dynamic> json) {
+    _id = json['id'];
+    _dbfId = json['dbfId'];
+    _name = json['name'];
+    _text = json['text'];
+    _flavor = json['flavor'];
+    _artist = json['artist'];
+    _attack = json['attack'];
+    _cardClass = json['cardClass'];
+    _collectible = json['collectible'];
+    _cost = json['cost'];
+    _elite = json['elite'];
+    _faction = json['faction'];
+    _health = json['health'];
+    _mechanics = json['mechanics']?.cast<String>() ?? [];
+    _rarity = json['rarity'];
+    _set = json['set'];
+    _type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this._id;
+    data['dbfId'] = this._dbfId;
+    data['name'] = this._name;
+    data['text'] = this._text;
+    data['flavor'] = this._flavor;
+    data['artist'] = this._artist;
+    data['attack'] = this._attack;
+    data['cardClass'] = this._cardClass;
+    data['collectible'] = this._collectible;
+    data['cost'] = this._cost;
+    data['elite'] = this._elite;
+    data['faction'] = this._faction;
+    data['health'] = this._health;
+    data['mechanics'] = this._mechanics;
+    data['rarity'] = this._rarity;
+    data['set'] = this._set;
+    data['type'] = this._type;
+    return data;
+  }
+}
+
+class CardModelTmp {
   int _id;
   int _collectible;
   String _slug;
@@ -18,7 +152,7 @@ class CardModel {
   Duels _duels;
   List<int> _childIds;
 
-  CardModel(
+  CardModelTmp(
       {int id,
       int collectible,
       String slug,
@@ -94,7 +228,7 @@ class CardModel {
   List<int> get childIds => _childIds;
   set childIds(List<int> childIds) => _childIds = childIds;
 
-  CardModel.fromJson(Map<String, dynamic> json) {
+  CardModelTmp.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _collectible = json['collectible'];
     _slug = json['slug'];
