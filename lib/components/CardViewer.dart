@@ -19,7 +19,7 @@ class _CardViewerState extends State<CardViewer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(jsonEncode(widget.card));
+    // print(jsonEncode(widget.card));
   }
 
   @override

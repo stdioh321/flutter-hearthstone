@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                       try {
                         String tmpUrl = Api.instance.getSound(card);
                         AudioPlayer audioPlayer = AudioPlayer();
-                        await audioPlayer.play(tmpUrl);
+                        await audioPlayer.play(tmpUrl, isLocal: false);
                         // var _ctrl = VideoPlayerController.network(
                         //   "${tmpUrl}",
                         // );
