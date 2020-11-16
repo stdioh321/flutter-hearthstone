@@ -9,7 +9,7 @@ import 'package:hearthstonecatalog/services/Api.dart';
 import 'package:hearthstonecatalog/services/Status.dart';
 import 'package:hearthstonecatalog/services/Utils.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _searchCtrl = TextEditingController(text: "");
   Status statusCards = Status.loading;
   ScrollController _cardsScrollCtrl = ScrollController();
+  String lang = "enUS";
   @override
   void initState() {
     // TODO: implement initState
@@ -33,34 +34,40 @@ class _HomePageState extends State<HomePage> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    _loadCardProv();
-  }
-
-  _loadCardProv() async {
-    // statusCards = Status.loading;
-
     if (cardsProv == null) {
       cardsProv = Provider.of<CardsProv>(context);
-      try {
-        await cardsProv.loadCards();
-        _cards = cardsProv.cards;
-        cardsProv.cardsStatus = Status.ok;
-        // statusCards = Status.ok;
-        // setState(() {});
-      } catch (e) {
-        print("ERROR: ");
-        print(e);
-        cardsProv.cardsStatus = Status.error;
-      }
-      cardsProv.notifyListeners();
+      _loadCardProv();
     }
+  }
+
+  _loadCardProv({String lang: 'enUS'}) async {
+    cardsProv.cardsStatus = Status.loading;
+    _searchCtrl.text = "";
+    try {
+      await cardsProv.loadCards(lang: lang);
+      _cards = cardsProv.cards;
+      cardsProv.cardsStatus = Status.ok;
+      // statusCards = Status.ok;
+      // setState(() {});
+    } catch (e) {
+      print("ERROR: ");
+      print(e);
+      cardsProv.cardsStatus = Status.error;
+    }
+    cardsProv.notifyListeners();
   }
 
   _buildBody() {
     if (cardsProv.cardsStatus == Status.loading ||
         cardsProv.cardsStatus == Status.none) {
       return Center(
-        child: Text("Loading"),
+        child: Container(
+          height: 100,
+          child: Image.asset(
+            "assets/images/loading.gif",
+            fit: BoxFit.contain,
+          ),
+        ),
       );
     } else if (cardsProv.cardsStatus == Status.ok) {
       List cardsGrid =
@@ -87,13 +94,12 @@ class _HomePageState extends State<HomePage> {
                   child: GestureDetector(
                     onTap: () async {
                       Utils.instance.removeFocus(context);
+                      AudioPlayer audioPlayer = AudioPlayer();
+
                       try {
                         String tmpUrl = Api.instance.getSound(card);
-                        AudioPlayer audioPlayer = AudioPlayer();
+
                         await audioPlayer.play(tmpUrl, isLocal: false);
-                        // var _ctrl = VideoPlayerController.network(
-                        //   "${tmpUrl}",
-                        // );
                         print(tmpUrl);
                         // await _ctrl.play();
                       } catch (e) {
@@ -105,6 +111,7 @@ class _HomePageState extends State<HomePage> {
                             builder: (BuildContext context) =>
                                 CardViewer(card: card)),
                       );
+                      audioPlayer.stop();
                       print("Pop CardViewer");
                     },
                     child: CachedNetworkImage(
@@ -160,6 +167,44 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          cardsProv.cardsStatus != Status.ok
+              ? SizedBox()
+              : DropdownButton(
+                  iconSize: 0,
+                  value: lang,
+                  items: [
+                    DropdownMenuItem(
+                      value: "enUS",
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/flags/flag-usa.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: "ptBR",
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/flags/flag-brasil.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    print(value);
+                    if (value == lang) return;
+                    _loadCardProv(lang: value);
+                    setState(() {
+                      lang = value;
+                    });
+                  },
+                ),
+        ],
         title: TextFormField(
           controller: _searchCtrl,
           enabled: cardsProv.cardsStatus == Status.ok,

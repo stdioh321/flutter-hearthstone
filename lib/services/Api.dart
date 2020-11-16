@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hearthstonecatalog/models/CardModel.dart';
 import 'package:http/http.dart';
@@ -12,7 +13,7 @@ class Api {
       "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/";
 
   String urlApi =
-      "https://api.hearthstonejson.com/v1/latest/enUS/cards.collectible.json";
+      "https://api.hearthstonejson.com/v1/latest/%s/cards.collectible.json";
 
   String _urlSound =
       "https://media-hearth.cursecdn.com/audio/card-sounds/sound/VO_";
@@ -26,11 +27,10 @@ class Api {
     return _urlSound + card.id + "_Play_01.ogg";
   }
 
-  Future<String> getCards() async {
-    // return await
-    Response resp = await get(urlApi);
+  Future<String> getCards({@required lang: 'enUS'}) async {
+    String tmpUrl = urlApi.replaceAll(RegExp(r'%s'), lang);
+    Response resp = await get(tmpUrl);
     if (resp.statusCode != 200) throw Exception("Error getting cards.");
-    return resp.body;
-    return await rootBundle.loadString("assets/hearthstone_cards.json");
+    return utf8.decode(resp.bodyBytes);
   }
 }

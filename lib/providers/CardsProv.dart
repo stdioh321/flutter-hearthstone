@@ -13,11 +13,16 @@ class CardsProv extends ChangeNotifier {
     return _cards;
   }
 
-  Future loadCards() async {
-    String tmpCards = await Api.instance.getCards();
+  Future loadCards({String lang: "enUS"}) async {
+    String tmpCards = await Api.instance.getCards(lang: lang);
     _cards = (jsonDecode(tmpCards) as List).map((e) {
       return CardModel.fromJson(e);
     }).toList();
+    _cards.sort((a, b) {
+      String tmpNameA = a.name.toLowerCase().trim();
+      String tmpNameB = b.name.toLowerCase().trim();
+      return tmpNameA.compareTo(tmpNameB);
+    });
     // String tmpCards = await Api.instance.getCards();
     // _cards = (jsonDecode(tmpCards) as List).map((e) {
     //   var tmpCardModel = CardModel.fromJson(e);
@@ -42,6 +47,12 @@ class CardsProv extends ChangeNotifier {
 
     // notifyListeners();
     return tmpCards;
+  }
+
+  String getImage(@required CardModel card, {bool img512: false}) {
+    String img =
+        img512 == true ? Api.instance.urlImage512 : Api.instance.urlImage256;
+    return "${img}${card.id}.png";
   }
 
   @override
