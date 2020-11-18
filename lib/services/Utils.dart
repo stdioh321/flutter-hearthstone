@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hearthstonecatalog/main.dart';
+import 'package:http/http.dart';
 
 class Utils {
   static Utils _instance = null;
@@ -25,6 +29,24 @@ class Utils {
     } catch (e) {
       print(e);
     }
+  }
+
+  double angleToRadian([double angle = 0]) {
+    return angle * pi / 180;
+  }
+
+  Future<bool> checkUrlWorks(@required String url) async {
+    Response resp = await head(url);
+
+    if (resp.statusCode == 200) return true;
+    return false;
+  }
+
+  updateAppState(BuildContext context) {
+    try {
+      MyAppState myAppState = context.findRootAncestorStateOfType<MyAppState>();
+      myAppState.setState(() {});
+    } catch (e) {}
   }
 
   // Debounce

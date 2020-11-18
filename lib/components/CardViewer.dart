@@ -1,11 +1,12 @@
 import 'dart:convert';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:hearthstonecatalog/models/CardModel.dart';
 import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Api.dart';
+import 'package:hearthstonecatalog/services/Utils.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
@@ -13,28 +14,70 @@ import 'package:provider/provider.dart';
 class CardViewer extends StatefulWidget {
   CardModel card;
   CardViewer({@required this.card});
+
   @override
   _CardViewerState createState() => _CardViewerState();
 }
 
 class _CardViewerState extends State<CardViewer> {
-  CardsProv cardsProv;
+  // CardsProv cardsProv;
+  AudioPlayer tmpAudio = AudioPlayer();
+  bool audioOk = false;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    tmpAudio.stop();
+    super.dispose();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkAudioOk();
     // print(Api.instance.urlImage256 + widget.card.id + ".png");
+  }
+
+  checkAudioOk() async {
+    // print('checkAudioOk');
+    try {
+      audioOk = await Utils.instance
+                  .checkUrlWorks(Api.instance.getSound(widget.card)) ==
+              true
+          ? true
+          : false;
+    } catch (e) {}
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    cardsProv = cardsProv ?? Provider.of<CardsProv>(context);
+    // cardsProv = cardsProv ?? Provider.of<CardsProv>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.card.name,
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          audioOk == true
+              ? IconButton(
+                  icon: Icon(
+                    Icons.volume_up,
+                  ),
+                  onPressed: () async {
+                    try {
+                      await tmpAudio.stop();
+                      String tmpUrl = Api.instance.getSound(widget.card);
+                      await tmpAudio.play(tmpUrl);
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                )
+              : SizedBox()
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -77,7 +120,7 @@ class _CardViewerState extends State<CardViewer> {
                                       );
                                     },
                                     imageProvider:
-                                        NetworkImage(cardsProv.getImage(
+                                        NetworkImage(Api.instance.getImage(
                                       widget.card,
                                       img512: true,
                                     )),

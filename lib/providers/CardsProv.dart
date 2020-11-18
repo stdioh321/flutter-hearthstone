@@ -35,6 +35,7 @@ class CardsProv extends ChangeNotifier {
   }
 
   List<CardModel> getFilterdCards({String search: ""}) {
+    // print('getFilterdCards');
     search = search.toLowerCase().trim();
     // print('getFilterdCards');
     var tmpCards = _cards.where((e) {
@@ -49,11 +50,11 @@ class CardsProv extends ChangeNotifier {
     return tmpCards;
   }
 
-  String getImage(@required CardModel card, {bool img512: false}) {
-    String img =
-        img512 == true ? Api.instance.urlImage512 : Api.instance.urlImage256;
-    return "${img}${card.id}.png";
-  }
+  // String getImage(@required CardModel card, {bool img512: false}) {
+  //   String img =
+  //       img512 == true ? Api.instance.urlImage512 : Api.instance.urlImage256;
+  //   return "${img}${card.id}.png";
+  // }
 
   @override
   void notifyListeners() {

@@ -27,6 +27,12 @@ class Api {
     return _urlSound + card.id + "_Play_01.ogg";
   }
 
+  String getImage(@required CardModel card, {bool img512: false}) {
+    String img =
+        img512 == true ? Api.instance.urlImage512 : Api.instance.urlImage256;
+    return "${img}${card.id}.png";
+  }
+
   Future<String> getCards({@required lang: 'enUS'}) async {
     String tmpUrl = urlApi.replaceAll(RegExp(r'%s'), lang);
     Response resp = await get(tmpUrl);
