@@ -1,12 +1,10 @@
-import 'dart:math';
-
-import 'package:audioplayers/audioplayers.dart';
+import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:hearthstonecatalog/components/CardViewer.dart';
-import 'package:hearthstonecatalog/models/CardModel.dart';
+import 'package:hearthstonecatalog/components/FilterModal.dart';
+import 'package:hearthstonecatalog/models/FilterModel.dart';
 import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Api.dart';
 import 'package:hearthstonecatalog/services/Prefs.dart';
@@ -20,52 +18,18 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> {
   CardsProv cardsProv = null;
-  List<CardModel> _cards = [];
+
   TextEditingController _searchCtrl = TextEditingController(text: "");
   Status statusCards = Status.loading;
   ScrollController _cardsScrollCtrl = ScrollController();
   String lang = Prefs.instance.prefs.getString("lang") ?? "enUS";
 
-  AnimationController animCtrl;
-  // Animation boxAnimation;
-  // Animation opacityAnimation;
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // print("initState");
-    animCtrl = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 3000,
-      ),
-    );
-    // boxAnimation = Tween(
-    //   begin: 0.0,
-    //   end: 1.0,
-    // ).animate(
-    //   CurvedAnimation(
-    //     parent: animCtrl,
-    //     curve: Interval(
-    //       0.0,
-    //       0.5,
-    //       curve: Curves.decelerate,
-    //     ),
-    //   ),
-    // );
-    // opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //   parent: animCtrl,
-    //   curve: Curves.ease,
-    // ));
-    // _cardsScrollCtrl.addListener(() {
-    //   print("addListener: _cardsScrollCtrl");
-    // });
-    // colorAnimation =
-    //     ColorTween(begin: Colors.blue, end: Colors.yellow).animate(controller);
-    // sizeAnimation = Tween<double>(begin: 100.0, end: 200.0).animate(controller);
   }
 
   @override
@@ -74,7 +38,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.didChangeDependencies();
     if (cardsProv == null) {
       cardsProv = Provider.of<CardsProv>(context);
-      _loadCardProv();
+      _loadCardProv(lang: lang);
     }
   }
 
@@ -83,7 +47,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _searchCtrl.text = "";
     try {
       await cardsProv.loadCards(lang: lang);
-      _cards = cardsProv.cards;
+      // _cards = cardsProv.cards;
       cardsProv.cardsStatus = Status.ok;
       // statusCards = Status.ok;
       // setState(() {});
@@ -96,7 +60,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   _buildBody() {
-    print('_buildBody');
     if (cardsProv.cardsStatus == Status.loading ||
         cardsProv.cardsStatus == Status.none) {
       return Center(
@@ -109,8 +72,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       );
     } else if (cardsProv.cardsStatus == Status.ok) {
-      List cardsGrid =
-          cardsProv.getFilterdCards(search: _searchCtrl.text).map((card) {
+      // int idx = 1;
+      List cardsGrid = cardsProv.cards.map((card) {
         return Container(
           child: Column(
             children: [
@@ -133,16 +96,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: GestureDetector(
                     onTap: () async {
                       Utils.instance.removeFocus(context);
-                      // // AudioPlayer audioPlayer = AudioPlayer();
 
-                      // // try {
-                      // //   String tmpUrl = Api.instance.getSound(card);
-                      // //   await audioPlayer.play(tmpUrl, isLocal: false);
-                      // //   print(tmpUrl);
-                      // //   // await _ctrl.play();
-                      // // } catch (e) {
-                      // //   print(e);
-                      // // }
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -150,32 +104,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               CardViewer(card: card),
                         ),
                       );
-                      // audioPlayer.stop();
-                      print("Pop CardViewer");
                     },
                     child: CachedNetworkImage(
                       imageBuilder: (context, imageProvider) {
-                        // print('imageBuilder');
-                        final animCtrl = AnimationController(
-                          vsync: this,
+                        return Animator<double>(
+                          tween: Tween(begin: -80.0, end: 0.0),
+                          cycles: 1,
+                          curve: Curves.easeInOut,
                           duration: Duration(milliseconds: 400),
-                        );
-
-                        final aBox =
-                            Tween(begin: 0.0, end: 1.0).animate(animCtrl);
-
-                        final animTranslade =
-                            Tween(begin: -50.0, end: 0.0).animate(animCtrl);
-
-                        // if (animCtrl.status != AnimationStatus.completed)
-
-                        animCtrl.forward();
-
-                        return AnimatedBuilder(
-                          animation: animCtrl,
-                          builder: (BuildContext context, Widget child) {
+                          builder: (context, animatorState, child) {
                             return Transform.translate(
-                              offset: Offset(animTranslade.value, 0),
+                              offset: Offset(animatorState.value, 0.0),
                               child: Container(
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
@@ -242,9 +181,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     return Scaffold(
       appBar: AppBar(
         actions: [
+          cardsProv.cardsStatus != Status.ok
+              ? SizedBox()
+              : IconButton(
+                  icon: Icon(
+                    Icons.sort,
+                  ),
+                  onPressed: () {
+                    print('onPressed');
+                  },
+                ),
+          cardsProv.cardsStatus != Status.ok
+              ? SizedBox()
+              : IconButton(
+                  icon: Icon(Icons.filter_alt),
+                  onPressed: () async {
+                    var result = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          padding: EdgeInsets.fromLTRB(45, 30, 45, 30),
+                          child: FilterModal(
+                            filters: cardsProv.filters,
+                          ),
+                        );
+                      },
+                    );
+
+                    if (result.runtimeType == FilterModel) {
+                      cardsProv.execFilterCards(
+                          search: _searchCtrl.text, filters: result);
+                      _cardsScrollCtrl?.animateTo(0,
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.easeInOut);
+                    }
+
+                    // print
+                    // cardsProv.notifyListeners();
+                  },
+                ),
           cardsProv.cardsStatus != Status.ok
               ? SizedBox()
               : DropdownButtonHideUnderline(
@@ -278,7 +257,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ],
                     onChanged: (value) async {
-                      print(value);
+                      // print(value);
                       if (value == lang) return;
                       await Prefs.instance.prefs.setString("lang", value);
                       _loadCardProv(lang: value);
@@ -297,12 +276,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           enabled: cardsProv.cardsStatus == Status.ok,
           onChanged: (v) {
             Utils.instance.run(() {
-              cardsProv.notifyListeners();
-              _cardsScrollCtrl?.animateTo(
-                0,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
+              cardsProv.execFilterCards(
+                search: _searchCtrl.text,
+                filters: cardsProv.filters,
               );
+              _cardsScrollCtrl?.animateTo(0,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeInOut);
             }, 300);
           },
           decoration: InputDecoration(hintText: "Search..."),

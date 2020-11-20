@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hearthstonecatalog/pages/HomePage.dart';
+import 'package:hearthstonecatalog/pages/TmpPage1.dart';
 import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Prefs.dart';
+import 'package:hearthstonecatalog/services/Vars.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +13,7 @@ void main() async {
 
   // Load SharedPreferences
   await loadPrefs();
+  await Vars.instance.init();
   // Than we setup preferred orientations,
   // and only after it finished we run our app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

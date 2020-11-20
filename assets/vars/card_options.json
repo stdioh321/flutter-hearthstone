@@ -1,0 +1,31 @@
+{
+    "cardClasses": [
+        "DEATHKNIGHT",
+        "DRUID",
+        "HUNTER",
+        "MAGE",
+        "PALADIN",
+        "PRIEST",
+        "ROGUE",
+        "SHAMAN",
+        "WARLOCK",
+        "WARRIOR",
+        "DREAM",
+        "NEUTRAL",
+        "WHIZBANG",
+        "DEMONHUNTER"
+    ],
+    "rarity": [
+        "COMMON",
+        "EPIC",
+        "FREE",
+        "LEGENDARY",
+        "RARE"
+    ],
+    "cardType": [
+        "HERO",
+        "MINION",
+        "SPELL",
+        "WEAPON"
+    ]
+}
