@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hearthstonecatalog/components/CheckboxTileCustom.dart';
 import 'package:hearthstonecatalog/models/FilterModel.dart';
-import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Vars.dart';
 
 class FilterModal extends StatefulWidget {
   FilterModel filters;
-  FilterModal({this.filters});
+  FilterModal({@required this.filters}) {}
 
   @override
   _FilterModalState createState() => _FilterModalState();

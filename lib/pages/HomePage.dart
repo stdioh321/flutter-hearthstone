@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hearthstonecatalog/components/CardViewer.dart';
 import 'package:hearthstonecatalog/components/FilterModal.dart';
 import 'package:hearthstonecatalog/models/FilterModel.dart';
+import 'package:hearthstonecatalog/models/SortModel.dart';
 import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Api.dart';
 import 'package:hearthstonecatalog/services/Prefs.dart';
@@ -26,10 +27,14 @@ class _HomePageState extends State<HomePage> {
   ScrollController _cardsScrollCtrl = ScrollController();
   String lang = Prefs.instance.prefs.getString("lang") ?? "enUS";
 
+  List<SortModel> sortsList =
+      SortModel.types.map((e) => SortModel(label: e, dir: "asc")).toList();
+  SortModel currSort;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    currSort = sortsList[0];
   }
 
   @override
@@ -45,6 +50,8 @@ class _HomePageState extends State<HomePage> {
   _loadCardProv({String lang: 'enUS'}) async {
     cardsProv.cardsStatus = Status.loading;
     _searchCtrl.text = "";
+    cardsProv.filters.reset();
+    currSort = sortsList[0];
     try {
       await cardsProv.loadCards(lang: lang);
       // _cards = cardsProv.cards;
@@ -73,6 +80,22 @@ class _HomePageState extends State<HomePage> {
       );
     } else if (cardsProv.cardsStatus == Status.ok) {
       // int idx = 1;
+      cardsProv.cards.sort((a, b) {
+        int result = 0;
+        if (currSort.label == 'A-Z') {
+          result = a.name
+              .trim()
+              .toLowerCase()
+              .compareTo(b.name.trim().toLowerCase());
+        } else if (currSort.label == 'Mana') {
+          result = ((a.cost ?? 0) - (b.cost ?? 0));
+        } else if (currSort.label == 'Atk') {
+          result = ((a.attack ?? 0) - (b.attack ?? 0));
+        } else if (currSort.label == 'Health') {
+          result = ((a.health ?? 0) - (b.health ?? 0));
+        }
+        return result * (currSort.dir == "desc" ? -1 : 1);
+      });
       List cardsGrid = cardsProv.cards.map((card) {
         return Container(
           child: Column(
@@ -187,12 +210,51 @@ class _HomePageState extends State<HomePage> {
         actions: [
           cardsProv.cardsStatus != Status.ok
               ? SizedBox()
-              : IconButton(
-                  icon: Icon(
-                    Icons.sort,
-                  ),
-                  onPressed: () {
-                    print('onPressed');
+              : PopupMenuButton<SortModel>(
+                  icon: Icon(Icons.sort),
+                  tooltip: "Sort",
+                  onSelected: (value) {
+                    Utils.instance.removeFocus(context);
+                    // print(value.dir);
+                    setState(() {
+                      if (value.label == currSort.label) {
+                        if (currSort.dir == "desc")
+                          value.dir = "asc";
+                        else
+                          value.dir = "desc";
+                      } else {
+                        value.dir = "asc";
+                      }
+                      currSort = value;
+                    });
+                  },
+                  onCanceled: () {
+                    Utils.instance.removeFocus(context);
+                    print('onCanceled');
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return sortsList.map((e) {
+                      return PopupMenuItem(
+                        value: e,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              e.label,
+                              style: TextStyle(
+                                  fontWeight: e.label == currSort.label
+                                      ? FontWeight.w900
+                                      : null),
+                            ),
+                            e.label == currSort.label
+                                ? (currSort.dir == "desc"
+                                    ? Icon(Icons.arrow_upward)
+                                    : Icon(Icons.arrow_downward))
+                                : SizedBox(),
+                          ],
+                        ),
+                      );
+                    }).toList();
                   },
                 ),
           cardsProv.cardsStatus != Status.ok
@@ -203,16 +265,18 @@ class _HomePageState extends State<HomePage> {
                     var result = await showDialog(
                       context: context,
                       builder: (context) {
+                        var tmpFilters = cardsProv.filters.clone();
                         return Container(
                           padding: EdgeInsets.fromLTRB(45, 30, 45, 30),
                           child: FilterModal(
-                            filters: cardsProv.filters,
+                            filters: tmpFilters,
                           ),
                         );
                       },
                     );
 
                     if (result.runtimeType == FilterModel) {
+                      cardsProv.filters = result;
                       cardsProv.execFilterCards(
                           search: _searchCtrl.text, filters: result);
                       _cardsScrollCtrl?.animateTo(0,

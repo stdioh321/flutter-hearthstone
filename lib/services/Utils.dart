@@ -22,10 +22,10 @@ class Utils {
     try {
       SystemChannels.textInput.invokeMethod('TextInput.hide');
       FocusScopeNode currentFocus = FocusScope.of(context);
-      if (!currentFocus.hasPrimaryFocus) {
-        currentFocus.unfocus();
-      }
-      // FocusScope.of(context).requestFocus(FocusNode());
+      // if (!currentFocus.hasPrimaryFocus) {
+      //   currentFocus.unfocus();
+      // }
+      FocusScope.of(context).requestFocus(FocusNode());
     } catch (e) {
       print(e);
     }

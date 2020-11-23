@@ -6,8 +6,17 @@ class FilterModel {
   Map<String, bool> rarity = {};
   Map<String, bool> cardType = {};
   Map<String, bool> cost = {};
+
   FilterModel() {
     reset();
+  }
+  FilterModel clone() {
+    var tmp = new FilterModel();
+    tmp.cardClasses = Map.from(this.cardClasses);
+    tmp.rarity = Map.from(this.rarity);
+    tmp.cardType = Map.from(this.cardType);
+    tmp.cost = Map.from(this.cost);
+    return tmp;
   }
 
   reset({bool clearSearch: false}) {

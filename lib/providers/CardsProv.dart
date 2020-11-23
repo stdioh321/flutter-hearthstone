@@ -28,11 +28,11 @@ class CardsProv extends ChangeNotifier {
     _cardsAll = (jsonDecode(tmpCards) as List).map((e) {
       return CardModel.fromJson(e);
     }).toList();
-    _cardsAll.sort((a, b) {
-      String tmpNameA = a.name.toLowerCase().trim();
-      String tmpNameB = b.name.toLowerCase().trim();
-      return tmpNameA.compareTo(tmpNameB);
-    });
+    // _cardsAll.sort((a, b) {
+    // String tmpNameA = a.name.toLowerCase().trim();
+    // String tmpNameB = b.name.toLowerCase().trim();
+    // return tmpNameA.compareTo(tmpNameB);
+    // });
     _cards = [..._cardsAll];
     notifyListeners();
   }
