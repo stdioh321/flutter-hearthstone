@@ -2,7 +2,7 @@ import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:hearthstonecatalog/components/CardViewer.dart';
+import 'package:hearthstonecatalog/pages/CardDetails.dart';
 import 'package:hearthstonecatalog/components/FilterModal.dart';
 import 'package:hearthstonecatalog/models/FilterModel.dart';
 import 'package:hearthstonecatalog/models/SortModel.dart';
@@ -91,7 +91,9 @@ class _HomePageState extends State<HomePage> {
           result = ((a.cost ?? 0) - (b.cost ?? 0));
         } else if (currSort.label == 'Atk') {
           result = ((a.attack ?? 0) - (b.attack ?? 0));
-        } else if (currSort.label == 'Health') {
+        } else if (currSort.label == 'Health' &&
+            a.type != "HERO" &&
+            b.type != "HERO") {
           result = ((a.health ?? 0) - (b.health ?? 0));
         }
         return result * (currSort.dir == "desc" ? -1 : 1);
@@ -124,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              CardViewer(card: card),
+                              CardDetails(card: card),
                         ),
                       );
                     },
@@ -213,8 +215,10 @@ class _HomePageState extends State<HomePage> {
               : PopupMenuButton<SortModel>(
                   icon: Icon(Icons.sort),
                   tooltip: "Sort",
+                  offset: Offset(0.0, 20.0),
                   onSelected: (value) {
                     Utils.instance.removeFocus(context);
+                    _cardsScrollCtrl.jumpTo(0);
                     // print(value.dir);
                     setState(() {
                       if (value.label == currSort.label) {
@@ -267,7 +271,7 @@ class _HomePageState extends State<HomePage> {
                       builder: (context) {
                         var tmpFilters = cardsProv.filters.clone();
                         return Container(
-                          padding: EdgeInsets.fromLTRB(45, 30, 45, 30),
+                          padding: EdgeInsets.fromLTRB(30, 30, 30, 30),
                           child: FilterModal(
                             filters: tmpFilters,
                           ),

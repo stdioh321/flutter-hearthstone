@@ -56,11 +56,11 @@ class _FilterModalState extends State<FilterModal> {
           ),
         ),
         appBar: AppBar(
-          leading: SizedBox(),
+          centerTitle: true,
           title: Text("Filter"),
         ),
         body: Container(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(5),
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
@@ -72,13 +72,19 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 9,
+                childAspectRatio: 2.5,
                 children:
                     (Vars.instance.cardOptions['cardClasses'] as List).map((e) {
                   var cardClass = widget.filters.cardClasses;
                   bool v = cardClass[e] == true ? true : false;
                   return CheckboxListTile(
-                    title: Text(e),
+                    title: Text(
+                      e,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
                     value: v,
                     onChanged: (v) {
                       cardClass[e] = v;
@@ -101,13 +107,19 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 9,
+                childAspectRatio: 2.5,
                 children:
                     (Vars.instance.cardOptions['rarity'] as List).map((e) {
                   var rarity = widget.filters.rarity;
                   bool v = rarity[e] == true ? true : false;
                   return CheckboxListTile(
-                    title: Text(e),
+                    title: Text(
+                      e,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
                     value: v,
                     onChanged: (v) {
                       rarity[e] = v;
@@ -130,13 +142,19 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 9,
+                childAspectRatio: 2.5,
                 children:
                     (Vars.instance.cardOptions['cardType'] as List).map((e) {
                   var cardType = widget.filters.cardType;
                   bool v = cardType[e] == true ? true : false;
                   return CheckboxListTile(
-                    title: Text(e),
+                    title: Text(
+                      e,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
                     value: v,
                     onChanged: (v) {
                       cardType[e] = v;
@@ -158,14 +176,20 @@ class _FilterModalState extends State<FilterModal> {
                     )),
               ),
               SliverGrid.count(
-                crossAxisCount: 4,
-                childAspectRatio: 4,
+                crossAxisCount: 3,
+                childAspectRatio: 2.5,
                 children: List.generate(13, (index) => "${index}").map((e) {
                   var cost = widget.filters.cost;
                   bool v = cost[e] == true ? true : false;
                   return CheckboxListTile(
                     value: v,
-                    title: Text(e),
+                    title: Text(
+                      e,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
                     onChanged: (value) {
                       setState(() {
                         cost[e] = value;
@@ -175,6 +199,11 @@ class _FilterModalState extends State<FilterModal> {
                     },
                   );
                 }).toList(),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 100,
+                ),
               ),
             ],
           ),

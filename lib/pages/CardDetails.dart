@@ -8,15 +8,15 @@ import 'package:hearthstonecatalog/services/Api.dart';
 import 'package:hearthstonecatalog/services/Utils.dart';
 import 'package:photo_view/photo_view.dart';
 
-class CardViewer extends StatefulWidget {
+class CardDetails extends StatefulWidget {
   CardModel card;
-  CardViewer({@required this.card});
+  CardDetails({@required this.card});
 
   @override
-  _CardViewerState createState() => _CardViewerState();
+  _CardDetailsState createState() => _CardDetailsState();
 }
 
-class _CardViewerState extends State<CardViewer> {
+class _CardDetailsState extends State<CardDetails> {
   // CardsProv cardsProv;
   AudioPlayer tmpAudio = AudioPlayer();
   bool audioOk = false;

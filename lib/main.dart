@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hearthstonecatalog/pages/HomePage.dart';
-import 'package:hearthstonecatalog/pages/TmpPage1.dart';
 import 'package:hearthstonecatalog/providers/CardsProv.dart';
 import 'package:hearthstonecatalog/services/Prefs.dart';
 import 'package:hearthstonecatalog/services/Vars.dart';
