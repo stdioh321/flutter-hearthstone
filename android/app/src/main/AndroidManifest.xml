@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.stdioh.hearthstone.hearthstonecatalog">
+    package="br.polygon4games.hearthstonecatalog">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="hearthstonecatalog"
+        android:label="Hearthstone Catalog"
         android:icon="@mipmap/icon">
         <activity
             android:name=".MainActivity"
