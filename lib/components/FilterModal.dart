@@ -72,7 +72,7 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 2.5,
+                childAspectRatio: 5,
                 children:
                     (Vars.instance.cardOptions['cardClasses'] as List).map((e) {
                   var cardClass = widget.filters.cardClasses;
@@ -107,7 +107,7 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 2.5,
+                childAspectRatio: 5,
                 children:
                     (Vars.instance.cardOptions['rarity'] as List).map((e) {
                   var rarity = widget.filters.rarity;
@@ -142,7 +142,7 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 2,
-                childAspectRatio: 2.5,
+                childAspectRatio: 5,
                 children:
                     (Vars.instance.cardOptions['cardType'] as List).map((e) {
                   var cardType = widget.filters.cardType;
@@ -177,7 +177,7 @@ class _FilterModalState extends State<FilterModal> {
               ),
               SliverGrid.count(
                 crossAxisCount: 3,
-                childAspectRatio: 2.5,
+                childAspectRatio: 5,
                 children: List.generate(13, (index) => "${index}").map((e) {
                   var cost = widget.filters.cost;
                   bool v = cost[e] == true ? true : false;
